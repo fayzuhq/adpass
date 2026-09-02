@@ -5,33 +5,33 @@ export const mockDashboardMetrics = {
   totalClicks: 14890,
   conversionRate: 3.8,
   commissionTier: "Pro",
-  commissionRate: 60,
+  commissionRate: 55, // Updated from the previous value to match Pro logic.
   tierProgress: 182,
   tierGoal: 200,
-  nextTierRate: 70
+  nextTierRate: 65
 };
 
 export const mockQuickLinks = {
   chill: {
-    url: "adpass.co/c/raph-commu",
+    url: "chillvault.co/v/raph-commu",
     type: "chill",
     badge: "Whop Intégré"
   },
   nsfw: {
-    url: "adpass.co/x/vip-access",
+    url: "passlocker.net/v/vip-access",
     type: "nsfw",
     badge: "Content Locker"
   }
 };
 
 export const mockChartData = [
-  { day: "Lun", value: 45 },
-  { day: "Mar", value: 62 },
-  { day: "Mer", value: 55 },
-  { day: "Jeu", value: 92 },
-  { day: "Ven", value: 78 },
-  { day: "Sam", value: 110 },
-  { day: "Dim", value: 84 },
+  { day: "Lundi", value: 45, earnings: 45.50 },
+  { day: "Mardi", value: 62, earnings: 82.00 },
+  { day: "Mercredi", value: 55, earnings: 60.00 },
+  { day: "Jeudi", value: 92, earnings: 142.00 },
+  { day: "Vendredi", value: 78, earnings: 95.00 },
+  { day: "Samedi", value: 110, earnings: 180.00 },
+  { day: "Dimanche", value: 84, earnings: 110.00 },
 ];
 
 export const mockRecentActivities = [
@@ -43,11 +43,11 @@ export const mockRecentActivities = [
 ];
 
 export const mockLinks = [
-  { id: "1", name: "Discord VIP Access", url: "adpass.co/c/discord-vip", type: "chill", clicks: 5430, sales: 124, earnings: 992.00, active: true },
-  { id: "2", name: "Premium Content Pack", url: "adpass.co/x/premium-pack", type: "nsfw", clicks: 3200, sales: 85, earnings: 1275.00, active: true },
-  { id: "3", name: "Formation Crypto", url: "adpass.co/c/crypto-course", type: "chill", clicks: 1250, sales: 12, earnings: 96.00, active: true },
-  { id: "4", name: "Exclusive Gallery", url: "adpass.co/x/exclusive-gallery", type: "nsfw", clicks: 4890, sales: 210, earnings: 3150.00, active: false },
-  { id: "5", name: "Telegram Signals", url: "adpass.co/c/tg-signals", type: "chill", clicks: 890, sales: 5, earnings: 40.00, active: true },
+  { id: "1", name: "Discord VIP Access", url: "chillvault.co/v/discord-vip", type: "chill", clicks: 5430, sales: 124, earnings: 992.00, active: true, moderationStatus: 'active' },
+  { id: "2", name: "Premium Content Pack", url: "passlocker.net/v/premium-pack", type: "nsfw", clicks: 3200, sales: 85, earnings: 1275.00, active: true, moderationStatus: 'active' },
+  { id: "3", name: "Formation Crypto", url: "chillvault.co/v/crypto-course", type: "chill", clicks: 1250, sales: 12, earnings: 96.00, active: true, moderationStatus: 'active' },
+  { id: "4", name: "Exclusive Gallery", url: "passlocker.net/v/exclusive-gallery", type: "nsfw", clicks: 4890, sales: 210, earnings: 3150.00, active: false, moderationStatus: 'active' },
+  { id: "5", name: "Telegram Signals", url: "chillvault.co/v/tg-signals", type: "chill", clicks: 890, sales: 5, earnings: 40.00, active: true, moderationStatus: 'pending' },
 ];
 
 export const mockStats = {

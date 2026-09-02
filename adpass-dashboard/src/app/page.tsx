@@ -6,11 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { mockDashboardMetrics, mockQuickLinks, mockChartData, mockRecentActivities } from "@/lib/mockData";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function DashboardPage() {
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [chartLoaded, setChartLoaded] = useState(false);
+
+  useEffect(() => {
+    // Small delay to trigger the height animation
+    const timer = setTimeout(() => {
+      setChartLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -68,11 +77,11 @@ export default function DashboardPage() {
         <Card className="relative overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Commission {mockDashboardMetrics.commissionTier}</CardTitle>
-            <Badge variant="default">{mockDashboardMetrics.commissionRate}%</Badge>
+            <Badge variant="default">Jusqu&apos;à 55%</Badge>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between text-xs mb-2 mt-2">
-              <span className="text-muted-foreground">Progression Palier {mockDashboardMetrics.nextTierRate}%</span>
+              <span className="text-muted-foreground">Progression Palier Élite (Jusqu&apos;à 65%)</span>
               <span className="font-mono">{mockDashboardMetrics.tierProgress} / {mockDashboardMetrics.tierGoal}</span>
             </div>
             <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
@@ -95,19 +104,19 @@ export default function DashboardPage() {
             <CardContent>
               <div className="h-[250px] w-full flex items-end justify-between gap-2 pt-10">
                 {mockChartData.map((data, i) => (
-                  <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                    {/* Tooltip simulé au hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono bg-card border border-border px-2 py-1 rounded absolute -mt-10">
-                      {data.value} clics
+                  <div key={i} className="flex flex-col items-center gap-2 flex-1 group relative h-full justify-end">
+                    {/* Tooltip */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono bg-card border border-border px-2 py-1 rounded absolute -top-8 whitespace-nowrap z-10 pointer-events-none">
+                      {data.day}: {formatCurrency(data.earnings)}
                     </div>
                     {/* Barre du graph */}
-                    <div className="w-full bg-white/5 rounded-t-sm relative group-hover:bg-white/10 transition-colors h-full flex items-end">
+                    <div className="w-full bg-white/5 rounded-t-sm relative group-hover:bg-white/10 transition-colors h-full flex items-end overflow-hidden">
                       <div
-                        className="w-full bg-gradient-to-t from-primary/50 to-primary rounded-t-sm"
-                        style={{ height: `${(data.value / 120) * 100}%` }}
+                        className="w-full bg-gradient-to-t from-indigo-600 to-purple-400 rounded-t-sm transition-all duration-1000 ease-out"
+                        style={{ height: chartLoaded ? `${(data.value / 120) * 100}%` : '0%' }}
                       />
                     </div>
-                    <span className="text-xs text-muted-foreground">{data.day}</span>
+                    <span className="text-xs text-muted-foreground truncate w-full text-center">{data.day.substring(0, 3)}</span>
                   </div>
                 ))}
               </div>
@@ -178,7 +187,7 @@ export default function DashboardPage() {
                 <span className="font-mono text-sm truncate text-muted-foreground">{mockQuickLinks.chill.url}</span>
               </div>
               <Button
-                className="w-full"
+                className={`w-full transition-all ${copiedLink === mockQuickLinks.chill.url ? "" : "bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] active:scale-95 border-none text-white"}`}
                 onClick={() => handleCopy(mockQuickLinks.chill.url)}
                 variant={copiedLink === mockQuickLinks.chill.url ? "success" : "default"}
               >
@@ -206,7 +215,7 @@ export default function DashboardPage() {
                 <span className="font-mono text-sm truncate text-muted-foreground">{mockQuickLinks.nsfw.url}</span>
               </div>
               <Button
-                className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+                className={`w-full transition-all ${copiedLink === mockQuickLinks.nsfw.url ? "bg-green-600 text-white hover:bg-green-700" : "bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 hover:shadow-[0_0_15px_rgba(244,63,94,0.5)] active:scale-95 border-none text-white"}`}
                 onClick={() => handleCopy(mockQuickLinks.nsfw.url)}
               >
                 {copiedLink === mockQuickLinks.nsfw.url ? (

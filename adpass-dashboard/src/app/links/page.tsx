@@ -29,6 +29,7 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
           <TableHead className="text-right">Ventes</TableHead>
           <TableHead className="text-right">Gains</TableHead>
           <TableHead className="text-center">Statut</TableHead>
+          <TableHead className="text-center">Actif</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -37,7 +38,10 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
             <TableCell className="font-medium text-foreground">{link.name}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs text-muted-foreground bg-black/30 px-2 py-1 rounded">{link.url}</span>
+                <span className="font-mono text-xs text-muted-foreground bg-black/30 px-2 py-1 rounded">
+                  {/* Remove main domain, just show the path or use the full mock domain which is now updated */}
+                  {link.url}
+                </span>
                 <button
                   onClick={() => onCopy(link.url)}
                   className="text-muted-foreground hover:text-foreground transition-colors"
@@ -55,6 +59,13 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
             <TableCell className="text-right font-mono">{link.sales}</TableCell>
             <TableCell className="text-right font-mono font-medium text-success">
               {formatCurrency(link.earnings)}
+            </TableCell>
+            <TableCell className="text-center">
+              {link.moderationStatus === 'pending' ? (
+                <Badge variant="outline" className="text-orange-500 border-orange-500/30 bg-orange-500/10">En attente</Badge>
+              ) : (
+                <Badge variant="outline" className="text-success border-success/30 bg-success/10">Actif</Badge>
+              )}
             </TableCell>
             <TableCell className="text-center">
               <div className="flex justify-center">
@@ -119,18 +130,8 @@ export default function LinksPage() {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Créer un nouveau lien">
         <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setIsModalOpen(false); }}>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Nom du lien</label>
+            <label className="text-sm font-medium">Nom de campagne</label>
             <Input placeholder="Ex: Campagne Twitter Média" required />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Slug personnalisé</label>
-            <div className="flex items-center">
-              <span className="bg-white/5 border border-white/10 border-r-0 rounded-l-md px-3 py-2 text-sm text-muted-foreground h-10 flex items-center">
-                adpass.co/{newLinkType === 'chill' ? 'c' : 'x'}/
-              </span>
-              <Input className="rounded-l-none border-l-0" placeholder="mon-slug" required />
-            </div>
           </div>
 
           <div className="space-y-3">
@@ -154,7 +155,17 @@ export default function LinksPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">URL de redirection finale</label>
+            <label className="text-sm font-medium">Slug personnalisé</label>
+            <div className="flex items-center">
+              <span className="bg-white/5 border border-white/10 border-r-0 rounded-l-md px-3 py-2 text-sm text-muted-foreground h-10 flex items-center">
+                {newLinkType === 'chill' ? 'chillvault.co/v/' : 'passlocker.net/v/'}
+              </span>
+              <Input className="rounded-l-none border-l-0" placeholder="mon-slug" required />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">URL de destination finale</label>
             <Input type="url" placeholder="https://..." required />
           </div>
 
