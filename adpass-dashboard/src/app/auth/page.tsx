@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Flame } from "lucide-react";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push("/dashboard");
+  };
 
   return (
     <div className="relative min-h-screen bg-[#07080B] flex items-center justify-center overflow-hidden">
@@ -61,7 +68,7 @@ export default function AuthPage() {
             {/* Forms */}
             <div className="relative">
               {mode === "login" ? (
-                <form className="space-y-4 animate-in slide-in-from-left-4 fade-in duration-300" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-4 animate-in slide-in-from-left-4 fade-in duration-300" onSubmit={handleSubmit}>
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-1">Email ou Pseudo</label>
                     <input
@@ -81,12 +88,12 @@ export default function AuthPage() {
                       placeholder="••••••••"
                     />
                   </div>
-                  <button className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-6">
+                  <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-6">
                     Se connecter
                   </button>
                 </form>
               ) : (
-                <form className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300" onSubmit={handleSubmit}>
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-1">Pseudo affilié</label>
                     <input
@@ -122,7 +129,7 @@ export default function AuthPage() {
                       J&apos;accepte les <Link href="#" className="text-primary hover:underline">Conditions Générales d&apos;Utilisation</Link> et je certifie avoir plus de 18 ans pour le contenu NSFW.
                     </label>
                   </div>
-                  <button className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-4">
+                  <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-4">
                     Créer mon compte
                   </button>
                 </form>
