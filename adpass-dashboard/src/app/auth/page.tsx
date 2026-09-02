@@ -7,6 +7,7 @@ import { ArrowLeft, Flame } from "lucide-react";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -124,12 +125,21 @@ export default function AuthPage() {
                     </div>
                   </div>
                   <div className="flex items-start gap-2 pt-2">
-                    <input type="checkbox" className="mt-1 bg-zinc-900 border-white/10 text-primary focus:ring-primary rounded" />
+                    <input
+                      type="checkbox"
+                      className="mt-1 bg-zinc-900 border-white/10 text-primary focus:ring-primary rounded"
+                      checked={acceptTerms}
+                      onChange={(e) => setAcceptTerms(e.target.checked)}
+                    />
                     <label className="text-xs text-muted-foreground leading-tight">
                       J&apos;accepte les <Link href="#" className="text-primary hover:underline">Conditions Générales d&apos;Utilisation</Link> et je certifie avoir plus de 18 ans pour le contenu NSFW.
                     </label>
                   </div>
-                  <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-4">
+                  <button
+                    type="submit"
+                    disabled={!acceptTerms}
+                    className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-4"
+                  >
                     Créer mon compte
                   </button>
                 </form>
