@@ -76,10 +76,10 @@ export const mockPayouts = {
   available: 1428.50,
   pending: 210.00,
   history: [
-    { id: "wd-1", date: "2024-05-12", amount: 850.00, crypto: "USDT", address: "TXYZ...9AB2", status: "completed" },
-    { id: "wd-2", date: "2024-05-25", amount: 420.00, crypto: "LTC", address: "Lp8X...R4k1", status: "completed" },
-    { id: "wd-3", date: "2024-06-05", amount: 1500.00, crypto: "USDT", address: "TXYZ...9AB2", status: "rejected" },
-    { id: "wd-4", date: "2024-06-15", amount: 600.00, crypto: "USDT", address: "TXYZ...9AB2", status: "pending" },
+    { id: "wd-1", date: "2026-05-12", amount: 850.00, crypto: "USDT", address: "TXYZ...9AB2", status: "completed" },
+    { id: "wd-2", date: "2026-05-25", amount: 420.00, crypto: "LTC", address: "Lp8X...R4k1", status: "completed" },
+    { id: "wd-3", date: "2026-06-05", amount: 1500.00, crypto: "USDT", address: "TXYZ...9AB2", status: "rejected" },
+    { id: "wd-4", date: "2026-06-15", amount: 600.00, crypto: "USDT", address: "TXYZ...9AB2", status: "pending" },
   ]
 };
 

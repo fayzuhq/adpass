@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 const navigation = [
-  { name: "Tableau de bord", href: "/", icon: LayoutDashboard },
+  { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
   { name: "Mes liens", href: "/links", icon: LinkIcon },
   { name: "Statistiques", href: "/stats", icon: BarChart3 },
   { name: "Paiements", href: "/payouts", icon: Wallet },
@@ -21,7 +21,7 @@ export default function Sidebar() {
     <aside className="w-64 border-r border-white/10 fixed left-0 top-0 bottom-0 bg-background/95 backdrop-blur-md flex flex-col z-40">
       {/* Logo & Tier */}
       <div className="p-6 flex flex-col gap-4">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <div className="bg-primary p-2 rounded-xl">
             <Flame className="w-6 h-6 text-white" />
           </div>
@@ -29,7 +29,7 @@ export default function Sidebar() {
         </Link>
         <div className="px-3 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center justify-between">
           <span className="text-sm font-medium text-muted-foreground">Palier</span>
-          <Badge variant="default" className="text-[10px] uppercase">Tier 2 — 60%</Badge>
+          <Badge variant="default" className="text-[10px] uppercase">Palier Pro — 55%</Badge>
         </div>
       </div>
 
