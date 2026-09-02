@@ -64,9 +64,16 @@ export default function SettingsPage() {
                 />
               </div>
             </div>
+            {profile.email !== mockSettings.profile.email && (
+              <div className="space-y-2 pt-2 border-t border-white/5 animate-in fade-in duration-300">
+                <label className="text-sm font-medium text-orange-400">Mot de passe actuel requis pour valider le nouvel email</label>
+                <Input type="password" required placeholder="Votre mot de passe actuel" />
+              </div>
+            )}
             <div className="space-y-2 pt-2 border-t border-white/5">
               <label className="text-sm font-medium">Nouveau mot de passe</label>
               <Input type="password" placeholder="Laissez vide pour conserver l&apos;actuel" />
+              <p className="text-xs text-muted-foreground">Un code OTP sera envoyé par email.</p>
             </div>
           </CardContent>
         </Card>
