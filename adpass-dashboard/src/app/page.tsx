@@ -95,11 +95,11 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
-            <Link href="/auth" className="bg-white text-black font-semibold px-8 py-4 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 group">
+            <Link href="/auth" className="bg-white text-black font-semibold px-8 py-4 rounded-xl hover:bg-zinc-200 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 group">
               Démarrer maintenant
               <Zap className="w-4 h-4 group-hover:text-indigo-600 transition-colors" />
             </Link>
-            <Link href="/dashboard" className="bg-white/5 border border-white/10 text-white font-medium px-8 py-4 rounded-xl hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center">
+            <Link href="/dashboard" className="bg-white/5 border border-white/10 text-white font-medium px-8 py-4 rounded-xl hover:bg-white/10 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center">
               Voir la démo
             </Link>
           </div>
@@ -212,7 +212,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[200px]">
-            <div className="md:col-span-2 bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors relative overflow-hidden">
+            <div className="md:col-span-2 bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Lock className="w-24 h-24 text-indigo-500" />
               </div>
@@ -224,31 +224,31 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors">
+            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300">
               <Wallet className="w-8 h-8 text-success mb-4" />
               <h3 className="text-lg font-bold mb-2">Paiements Crypto</h3>
               <p className="text-muted-foreground text-sm">Retraits rapides en USDT et LTC. Zéro friction, sécurité maximale.</p>
             </div>
 
-            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors">
+            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300">
               <Shield className="w-8 h-8 text-indigo-400 mb-4" />
               <h3 className="text-lg font-bold mb-2">Validation Sécurisée</h3>
               <p className="text-muted-foreground text-sm">Anti-bot et vérification de complétion des offres en temps réel.</p>
             </div>
 
-            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors">
+            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300">
               <Zap className="w-8 h-8 text-yellow-400 mb-4" />
               <h3 className="text-lg font-bold mb-2">Paliers Progressifs</h3>
               <p className="text-muted-foreground text-sm">Débloque jusqu&apos;à 65% de commission en augmentant ton volume.</p>
             </div>
 
-            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors">
+            <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300">
               <LinkIcon className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-lg font-bold mb-2">Lien Unique</h3>
               <p className="text-muted-foreground text-sm">Un seul lien intelligent pour débloquer tout ton contenu de façon optimisée.</p>
             </div>
 
-            <div className="md:col-span-2 bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 transition-colors flex flex-col justify-end relative overflow-hidden">
+            <div className="md:col-span-2 bg-zinc-900/50 border border-white/5 rounded-2xl p-6 group hover:bg-zinc-900/80 hover:border-indigo-500/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-end relative overflow-hidden">
                <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                <h3 className="text-xl font-bold mb-2 relative z-10">Webhooks & Notifications</h3>
                <p className="text-muted-foreground text-sm relative z-10">Connecte ton Discord ou Telegram pour recevoir des alertes de conversion instantanées.</p>
@@ -295,7 +295,7 @@ export default function LandingPage() {
             {[
               { q: "Est-ce vraiment gratuit ?", a: "Oui, la plateforme est 100% gratuite. Nous nous rémunérons en gardant un pourcentage sur les offres complétées (la différence entre votre palier et 100%)." },
               { q: "Comment fonctionne la modération du contenu NSFW ?", a: "Les liens générés pour le NSFW utilisent un domaine isolé (passlocker.net) avec des avertissements explicites avant l'accès, respectant ainsi nos conditions et celles de nos annonceurs." },
-              { q: "Quand puis-je retirer mes cryptos ?", a: "Les retraits sont traités sous 24-48h pour les paliers Débutant, et en moins de 12h pour les paliers Pro et Élite. Minimum de retrait : 50 USDT." }
+              { q: "Quand puis-je retirer mes cryptos ?", a: "Les retraits sont traités sous 24-48h pour les paliers Débutant, et en moins de 12h pour les paliers Pro et Élite. Minimum de retrait : 20 € / 20 USDT." }
             ].map((faq, i) => (
               <div key={i} className="border border-white/10 rounded-lg bg-zinc-900/30 overflow-hidden">
                 <button
@@ -327,7 +327,7 @@ export default function LandingPage() {
           {/* Bottom CTA */}
           <div className="text-center mb-24">
             <h2 className="text-4xl font-bold mb-6">Prêt à maximiser tes revenus ?</h2>
-            <Link href="/auth" className="inline-block bg-white text-black font-semibold px-8 py-4 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+            <Link href="/auth" className="inline-block bg-white text-black font-semibold px-8 py-4 rounded-xl hover:bg-zinc-200 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
               Créer mon compte gratuitement
             </Link>
           </div>
@@ -338,7 +338,7 @@ export default function LandingPage() {
                 <Flame className="w-5 h-5 text-primary" />
                 <span className="font-bold">AdPass</span>
               </div>
-              <p className="text-xs text-muted-foreground">© 2024 AdPass Inc.<br/>Tous droits réservés.</p>
+              <p className="text-xs text-muted-foreground">© 2026 AdPass Inc.<br/>Tous droits réservés.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Plateforme</h4>

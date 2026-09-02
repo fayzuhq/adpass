@@ -18,3 +18,5 @@
 ○ Compiling / ...
  GET / 200 in 4.3s (next.js: 3.7s, application-code: 614ms)
  GET /auth 200 in 856ms (next.js: 797ms, application-code: 59ms)
+ GET / 200 in 450ms (next.js: 98ms, application-code: 352ms)
+ GET /auth 200 in 61ms (next.js: 19ms, application-code: 42ms)

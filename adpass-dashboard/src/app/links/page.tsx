@@ -85,6 +85,8 @@ export default function LinksPage() {
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   const [newLinkType, setNewLinkType] = useState<"chill" | "nsfw">("chill");
+  const [newLinkName, setNewLinkName] = useState("");
+  const [newLinkSlug, setNewLinkSlug] = useState("");
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -128,10 +130,39 @@ export default function LinksPage() {
       </Card>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Créer un nouveau lien">
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setIsModalOpen(false); }}>
+        <form className="space-y-6" onSubmit={(e) => {
+          e.preventDefault();
+
+          const domain = newLinkType === 'chill' ? 'chillvault.co/v/' : 'passlocker.net/v/';
+          const fullUrl = `https://${domain}${newLinkSlug || `generated-${Date.now().toString().slice(-4)}`}`;
+
+          const newLinkItem = {
+            id: `link-${Date.now()}`,
+            name: newLinkName || "Nouveau Lien",
+            url: fullUrl,
+            type: newLinkType,
+            clicks: 0,
+            sales: 0,
+            earnings: 0,
+            conversionRate: 0,
+            moderationStatus: 'pending' as const,
+            createdAt: new Date().toISOString().split('T')[0],
+            active: true
+          };
+
+          setLinks(prev => [newLinkItem, ...prev]);
+          setNewLinkName("");
+          setNewLinkSlug("");
+          setIsModalOpen(false);
+        }}>
           <div className="space-y-2">
             <label className="text-sm font-medium">Nom de campagne</label>
-            <Input placeholder="Ex: Campagne Twitter Média" required />
+            <Input
+              placeholder="Ex: Campagne Twitter Média"
+              value={newLinkName}
+              onChange={(e) => setNewLinkName(e.target.value)}
+              required
+            />
           </div>
 
           <div className="space-y-3">
@@ -160,7 +191,13 @@ export default function LinksPage() {
               <span className="bg-white/5 border border-white/10 border-r-0 rounded-l-md px-3 py-2 text-sm text-muted-foreground h-10 flex items-center">
                 {newLinkType === 'chill' ? 'chillvault.co/v/' : 'passlocker.net/v/'}
               </span>
-              <Input className="rounded-l-none border-l-0" placeholder="mon-slug" required />
+              <Input
+                className="rounded-l-none border-l-0"
+                placeholder="mon-slug"
+                value={newLinkSlug}
+                onChange={(e) => setNewLinkSlug(e.target.value)}
+                required
+              />
             </div>
           </div>
 
