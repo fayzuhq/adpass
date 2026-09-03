@@ -11,7 +11,8 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const router = useRouter();
   const { maintenanceMode } = useSettingsStore();
 
-  const isPublicPage = pathname === "/" || pathname === "/auth";
+  const publicRoutes = ['/', '/auth', '/cgu', '/confidentialite', '/mentions-legales', '/docs', '/contact', '/maintenance'];
+  const isPublicPage = publicRoutes.includes(pathname);
   const isAdminPage = pathname.startsWith("/admin");
   const isMaintenancePage = pathname === "/maintenance";
 
