@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Copy, CheckCircle2 } from "lucide-react";
+import { Plus, Copy, CheckCircle2, Search, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,11 +14,45 @@ import { formatCurrency } from "@/lib/utils";
 import { mockLinks } from "@/lib/mockData";
 import { useLinksStore } from "@/lib/store";
 import { toast } from "@/components/ui/use-toast";
+import { AffiliateLink } from "@/types";
 
 type Link = typeof mockLinks[0];
 
-const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeFilter: "all" | "chill" | "nsfw", links: Link[], onCopy: (url: string) => void, onToggle: (id: string) => void, copiedLink: string | null }) => {
-  const filteredLinks = typeFilter === "all" ? links : links.filter(l => l.type === typeFilter);
+const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink, searchQuery }: { typeFilter: "all" | "chill" | "nsfw", links: Link[], onCopy: (url: string) => void, onToggle: (id: string) => void, copiedLink: string | null, searchQuery: string }) => {
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  let filteredLinks = typeFilter === "all" ? links : links.filter(l => l.type === typeFilter);
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filteredLinks = filteredLinks.filter(l =>
+      l.name.toLowerCase().includes(q) ||
+      l.url.toLowerCase().includes(q)
+    );
+  }
+
+  if (sortConfig) {
+    filteredLinks = [...filteredLinks].sort((a: Link, b: Link) => {
+      const key = sortConfig.key as keyof Link;
+      const valA = a[key];
+      const valB = b[key];
+      if (valA !== undefined && valB !== undefined && valA < valB) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (valA !== undefined && valB !== undefined && valA > valB) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
 
   return (
     <Table>
@@ -27,9 +61,15 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
           <TableHead>Nom du lien</TableHead>
           <TableHead>URL Trackée</TableHead>
           <TableHead>Type</TableHead>
-          <TableHead className="text-right">Clics</TableHead>
-          <TableHead className="text-right">Ventes</TableHead>
-          <TableHead className="text-right">Gains</TableHead>
+          <TableHead className="text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('clicks')}>
+            <div className="flex items-center justify-end gap-1">Clics <ArrowUpDown className="w-3 h-3" /></div>
+          </TableHead>
+          <TableHead className="text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('sales')}>
+            <div className="flex items-center justify-end gap-1">Ventes <ArrowUpDown className="w-3 h-3" /></div>
+          </TableHead>
+          <TableHead className="text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort('earnings')}>
+            <div className="flex items-center justify-end gap-1">Gains <ArrowUpDown className="w-3 h-3" /></div>
+          </TableHead>
           <TableHead className="text-center">Statut</TableHead>
           <TableHead className="text-center">Actif</TableHead>
         </TableRow>
@@ -91,6 +131,7 @@ export default function LinksPage() {
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkSlug, setNewLinkSlug] = useState("");
   const [newLinkDestination, setNewLinkDestination] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -118,18 +159,30 @@ export default function LinksPage() {
 
       <Card>
         <CardContent className="p-0 sm:p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="px-4 pt-4 sm:px-0 sm:pt-0 mb-6">
-              <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg">
+          <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+              <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg w-full sm:w-auto">
                 <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white">Tous les liens</TabsTrigger>
                 <TabsTrigger value="chill" className="data-[state=active]:bg-primary data-[state=active]:text-white">Liens Chill</TabsTrigger>
                 <TabsTrigger value="nsfw" className="data-[state=active]:bg-pink-600 data-[state=active]:text-white">Liens NSFW</TabsTrigger>
               </TabsList>
+            </Tabs>
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher une campagne ou URL..."
+                className="pl-9 bg-white/5 border-white/10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+          </div>
 
-            <TabsContent value="all" className="m-0"><LinksTable typeFilter="all" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} /></TabsContent>
-            <TabsContent value="chill" className="m-0"><LinksTable typeFilter="chill" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} /></TabsContent>
-            <TabsContent value="nsfw" className="m-0"><LinksTable typeFilter="nsfw" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} /></TabsContent>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+
+            <TabsContent value="all" className="m-0"><LinksTable typeFilter="all" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} searchQuery={searchQuery} /></TabsContent>
+            <TabsContent value="chill" className="m-0"><LinksTable typeFilter="chill" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} searchQuery={searchQuery} /></TabsContent>
+            <TabsContent value="nsfw" className="m-0"><LinksTable typeFilter="nsfw" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} searchQuery={searchQuery} /></TabsContent>
           </Tabs>
         </CardContent>
       </Card>
@@ -147,6 +200,7 @@ export default function LinksPage() {
             name: newLinkName || "Nouveau Lien",
             url: fullUrl,
             type: newLinkType,
+            destination: newLinkDestination || "https://example.com",
             clicks: 0,
             sales: 0,
             earnings: 0,
@@ -160,11 +214,19 @@ export default function LinksPage() {
             id: newLinkId,
             date: new Date().toISOString().split('T')[0],
             affiliate: "Raph_Affiliate",
+            name: newLinkName || "Nouveau Lien",
             campaign: newLinkName || "Nouveau Lien",
             type: newLinkType,
             url: fullUrl,
             destination: newLinkDestination || "https://example.com",
-            status: "pending"
+            status: "pending",
+            clicks: 0,
+            sales: 0,
+            earnings: 0,
+            conversionRate: 0,
+            moderationStatus: 'pending' as const,
+            active: true,
+            createdAt: new Date().toISOString().split('T')[0]
           };
 
           addLink(newLinkItem, newAdminLink);

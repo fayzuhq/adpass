@@ -33,6 +33,7 @@ export default function PayoutsPage() {
       amount,
       crypto: cryptoSelect,
       address: walletAddress.substring(0, 4) + "..." + walletAddress.substring(walletAddress.length - 4),
+      wallet: walletAddress,
       status: "pending"
     };
 

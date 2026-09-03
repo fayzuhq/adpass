@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { mockLinks, mockAdminLinks, mockPayouts, mockAdminPayouts } from './mockData';
+import { AffiliateLink, PayoutRequest } from '@/types';
 
 // Helper to get from local storage or fallback to mock
 const getFromStorage = <T,>(key: string, initialData: T): T => {
@@ -28,9 +29,9 @@ export function useLinksStore() {
     localStorage.setItem('adpass_admin_links', JSON.stringify(adminLinks));
   }, [adminLinks]);
 
-  const addLink = (newLink: typeof mockLinks[0], newAdminLink: typeof mockAdminLinks[0]) => {
-    setLinks((prev) => [newLink, ...prev]);
-    setAdminLinks((prev) => [newAdminLink, ...prev]);
+  const addLink = (newLink: AffiliateLink, newAdminLink: AffiliateLink) => {
+    setLinks((prev) => [newLink, ...prev] as typeof mockLinks);
+    setAdminLinks((prev) => [newAdminLink, ...prev] as typeof mockAdminLinks);
   };
 
   const updateLinkStatus = (id: string, status: string) => {
@@ -54,9 +55,9 @@ export function usePayoutsStore() {
     localStorage.setItem('adpass_admin_payouts', JSON.stringify(adminPayouts));
   }, [adminPayouts]);
 
-  const addPayoutRequest = (req: typeof mockPayouts.history[0], adminReq: typeof mockAdminPayouts[0]) => {
-    setHistory((prev) => [req, ...prev]);
-    setAdminPayouts((prev) => [adminReq, ...prev]);
+  const addPayoutRequest = (req: PayoutRequest, adminReq: PayoutRequest) => {
+    setHistory((prev) => [req, ...prev] as typeof mockPayouts.history);
+    setAdminPayouts((prev) => [adminReq, ...prev] as typeof mockAdminPayouts);
   };
 
   const updatePayoutStatus = (id: string, status: string) => {
