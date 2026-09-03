@@ -91,3 +91,52 @@ export const mockSettings = {
   webhook: "https://discord.com/api/webhooks/123456789/abcdef...",
   twoFactorEnabled: true
 };
+
+export const mockUsers = [
+  {
+    email: "raph@adpass-partner.com",
+    password: "password123",
+    role: "affiliate",
+    targetUrl: "/dashboard",
+  },
+  {
+    email: "admin@adpass.co",
+    password: "adminpassword123",
+    role: "admin",
+    targetUrl: "/admin",
+  },
+];
+
+export const mockAdminStats = {
+  totalVolume: 84290.00,
+  volumeChange: 18,
+  netMargin: 33716.00,
+  totalClicks: 420180,
+  avgConversion: 4.2,
+  activeAffiliates: 148,
+  chillVolume: 35000.00,
+  nsfwVolume: 49290.00,
+};
+
+export const mockAdminEvents = [
+  { id: 1, type: "signup", message: "Nouvel affilié : crypto_king", time: "Il y a 5 min" },
+  { id: 2, type: "payout", message: "Paiement validé (150 USDT) pour raph_affiliate", time: "Il y a 12 min" },
+  { id: 3, type: "link", message: "Nouveau lien soumis par raph_affiliate", time: "Il y a 23 min" },
+];
+
+export const mockAdminLinks = [
+  { id: "l1", date: "2026-03-12", affiliate: "raph_affiliate", campaign: "Campagne TikTok", type: "chill", url: "chillvault.co/v/abc12", destination: "https://whop.com/test", status: "pending" },
+  { id: "l2", date: "2026-03-12", affiliate: "crypto_king", campaign: "NSFW Twitter", type: "nsfw", url: "passlocker.net/v/xyz98", destination: "https://example.com/nsfw", status: "pending" },
+  { id: "l3", date: "2026-03-11", affiliate: "raph_affiliate", campaign: "Ancien Lien", type: "chill", url: "chillvault.co/v/old", destination: "https://whop.com/test2", status: "active" },
+];
+
+export const mockAffiliates = [
+  { id: "a1", name: "Raph_Affiliate", email: "raph@adpass-partner.com", date: "2026-01-15", links: 12, balance: 428.50, totalGenerated: 12500, tier: "Pro", status: "active" },
+  { id: "a2", name: "Crypto_King", email: "king@crypto.com", date: "2026-02-02", links: 3, balance: 50.00, totalGenerated: 800, tier: "Standard", status: "active" },
+  { id: "a3", name: "Spammer_123", email: "spam@fake.com", date: "2026-03-10", links: 1, balance: 0, totalGenerated: 0, tier: "Standard", status: "suspended" },
+];
+
+export const mockAdminPayouts = [
+  { id: "p1", date: "2026-03-12", affiliate: "raph_affiliate", amount: 428.50, crypto: "USDT TRC-20", wallet: "TWvVqR3...", status: "pending" },
+  { id: "p2", date: "2026-03-11", affiliate: "Crypto_King", amount: 150.00, crypto: "LTC", wallet: "ltc1q...", status: "paid" },
+];

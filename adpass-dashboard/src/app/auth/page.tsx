@@ -4,14 +4,37 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Flame } from "lucide-react";
+import { mockUsers } from "@/lib/mockData";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError("");
+
+    const user = mockUsers.find(
+      (u) => u.email === loginEmail && u.password === loginPassword
+    );
+
+    if (user) {
+      router.push(user.targetUrl);
+    } else {
+      setLoginError("Email ou mot de passe incorrect");
+    }
+  };
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate creating an affiliate and redirecting
     router.push("/dashboard");
   };
 
@@ -69,13 +92,21 @@ export default function AuthPage() {
             {/* Forms */}
             <div className="relative">
               {mode === "login" ? (
-                <form className="space-y-4 animate-in slide-in-from-left-4 fade-in duration-300" onSubmit={handleSubmit}>
+                <form className="space-y-4 animate-in slide-in-from-left-4 fade-in duration-300" onSubmit={handleLogin}>
+                  {loginError && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-2.5 rounded-lg text-center font-medium animate-in fade-in zoom-in-95">
+                      {loginError}
+                    </div>
+                  )}
                   <div>
-                    <label className="block text-sm font-medium text-muted-foreground mb-1">Email ou Pseudo</label>
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Email</label>
                     <input
-                      type="text"
+                      type="email"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
                       className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                       placeholder="nom@exemple.com"
+                      required
                     />
                   </div>
                   <div>
@@ -85,8 +116,11 @@ export default function AuthPage() {
                     </div>
                     <input
                       type="password"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
                       className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                       placeholder="••••••••"
+                      required
                     />
                   </div>
                   <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] active:scale-95 transition-all mt-6">
@@ -94,7 +128,7 @@ export default function AuthPage() {
                   </button>
                 </form>
               ) : (
-                <form className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300" onSubmit={handleSubmit}>
+                <form className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300" onSubmit={handleSignup}>
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-1">Pseudo affilié</label>
                     <input
@@ -147,6 +181,16 @@ export default function AuthPage() {
             </div>
           </div>
         </div>
+
+        {/* Demo Help Block */}
+        <div className="mt-8 text-center animate-in fade-in duration-1000 delay-500">
+          <div className="inline-block bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-muted-foreground shadow-xl backdrop-blur-sm">
+            <p className="font-semibold text-foreground mb-1">Accès démo :</p>
+            <p>Affilié (<span className="text-indigo-300">raph@adpass-partner.com</span> / <span className="font-mono">password123</span>)</p>
+            <p>Admin (<span className="text-rose-300">admin@adpass.co</span> / <span className="font-mono">adminpassword123</span>)</p>
+          </div>
+        </div>
+
       </div>
     </div>
   );
