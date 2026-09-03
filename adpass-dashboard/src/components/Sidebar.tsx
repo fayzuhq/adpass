@@ -65,9 +65,9 @@ export default function Sidebar() {
             <p className="text-sm font-medium truncate text-foreground">Raph_Affiliate</p>
             <p className="text-xs text-muted-foreground truncate">raph@adpass-partner.com</p>
           </div>
-          <button className="text-muted-foreground hover:text-danger transition-colors">
+          <Link href="/auth" className="text-muted-foreground hover:text-danger transition-colors">
             <LogOut className="w-5 h-5" />
-          </button>
+          </Link>
         </div>
       </div>
     </aside>
