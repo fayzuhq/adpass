@@ -11,9 +11,10 @@ import { Modal } from "@/components/ui/modal";
 import { formatCurrency } from "@/lib/utils";
 import { mockPayouts } from "@/lib/mockData";
 import { usePayoutsStore } from "@/lib/store";
+import { toast } from "@/components/ui/use-toast";
 
 export default function PayoutsPage() {
-  const { history, addPayoutRequest } = usePayoutsStore();
+  const { history, addPayoutRequest, availableBalance, pendingBalance } = usePayoutsStore();
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [cryptoSelect, setCryptoSelect] = useState<"USDT" | "LTC">("USDT");
@@ -48,6 +49,7 @@ export default function PayoutsPage() {
     };
 
     addPayoutRequest(newRequest, newAdminRequest);
+    toast({ message: "Demande de retrait soumise avec succès" });
     setIsWithdrawModalOpen(false);
     setWithdrawAmount("");
     setWalletAddress("");
@@ -81,7 +83,7 @@ export default function PayoutsPage() {
           <CardContent>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div className="text-4xl font-bold font-mono text-white">
-                {formatCurrency(mockPayouts.available)}
+                {formatCurrency(availableBalance)}
               </div>
               <Button onClick={() => setIsWithdrawModalOpen(true)} className="w-full sm:w-auto bg-success hover:bg-success/90 text-white">
                 <ArrowUpRight className="w-4 h-4 mr-2" /> Demander un retrait
@@ -98,7 +100,7 @@ export default function PayoutsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold font-mono text-white/80">
-              {formatCurrency(mockPayouts.pending)}
+              {formatCurrency(pendingBalance)}
             </div>
             <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5" /> En cours de vérification par nos équipes.
@@ -158,7 +160,7 @@ export default function PayoutsPage() {
               <Input
                 type="number"
                 min="20"
-                max={mockPayouts.available}
+                max={availableBalance}
                 step="0.01"
                 required
                 className="pl-8 font-mono"

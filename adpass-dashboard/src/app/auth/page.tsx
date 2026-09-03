@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Flame } from "lucide-react";
 import { mockUsers } from "@/lib/mockData";
+import { useAffiliatesStore } from "@/lib/store";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -16,6 +17,7 @@ export default function AuthPage() {
   const [loginError, setLoginError] = useState("");
 
   const router = useRouter();
+  const { affiliates } = useAffiliatesStore();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,13 @@ export default function AuthPage() {
     );
 
     if (user) {
+      if (user.role === 'affiliate') {
+        const affiliateRecord = affiliates.find(a => a.email === user.email);
+        if (affiliateRecord && affiliateRecord.status === 'suspended') {
+          setLoginError("Ce compte a été suspendu par l'administration.");
+          return;
+        }
+      }
       router.push(user.targetUrl);
     } else {
       setLoginError("Email ou mot de passe incorrect");
