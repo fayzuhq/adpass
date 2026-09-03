@@ -138,5 +138,5 @@ export const mockAffiliates = [
 
 export const mockAdminPayouts = [
   { id: "p1", date: "2026-03-12", affiliate: "raph_affiliate", amount: 428.50, crypto: "USDT TRC-20", wallet: "TWvVqR3...", status: "pending" },
-  { id: "p2", date: "2026-03-11", affiliate: "Crypto_King", amount: 150.00, crypto: "LTC", wallet: "ltc1q...", status: "paid" },
+  { id: "p2", date: "2026-03-11", affiliate: "Crypto_King", amount: 150.00, crypto: "LTC", wallet: "ltc1q...", status: "completed" },
 ];

@@ -115,26 +115,23 @@ export default function AdminLinksPage() {
 
       <Card className="border-rose-500/20">
         <CardContent className="p-0 sm:p-6">
-          <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
               <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg w-full sm:w-auto">
                 <TabsTrigger value="pending" className="data-[state=active]:bg-rose-500 data-[state=active]:text-white">En attente de validation</TabsTrigger>
                 <TabsTrigger value="active" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white">Liens actifs</TabsTrigger>
                 <TabsTrigger value="rejected" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white">Liens rejetés</TabsTrigger>
               </TabsList>
-            </Tabs>
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher par affilié, campagne..."
-                className="pl-9 bg-white/5 border-white/10 border-rose-500/10 focus:ring-rose-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher par affilié, campagne..."
+                  className="pl-9 bg-white/5 border-white/10 border-rose-500/10 focus:ring-rose-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
             <TabsContent value="pending" className="m-0">{renderTable("pending")}</TabsContent>
             <TabsContent value="active" className="m-0">{renderTable("active")}</TabsContent>

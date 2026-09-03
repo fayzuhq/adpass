@@ -103,11 +103,9 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink, searchQue
               {formatCurrency(link.earnings)}
             </TableCell>
             <TableCell className="text-center">
-              {link.moderationStatus === 'pending' ? (
-                <Badge variant="outline" className="text-orange-500 border-orange-500/30 bg-orange-500/10">En attente</Badge>
-              ) : (
-                <Badge variant="outline" className="text-success border-success/30 bg-success/10">Actif</Badge>
-              )}
+              {link.moderationStatus === 'pending' && <Badge variant="outline" className="text-orange-500 border-orange-500/30 bg-orange-500/10">En attente</Badge>}
+              {link.moderationStatus === 'active' && <Badge variant="outline" className="text-success border-success/30 bg-success/10">Actif</Badge>}
+              {link.moderationStatus === 'rejected' && <Badge variant="outline" className="text-danger border-danger/30 bg-danger/10">Rejeté</Badge>}
             </TableCell>
             <TableCell className="text-center">
               <div className="flex justify-center">
@@ -159,26 +157,23 @@ export default function LinksPage() {
 
       <Card>
         <CardContent className="p-0 sm:p-6">
-          <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
               <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg w-full sm:w-auto">
                 <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white">Tous les liens</TabsTrigger>
                 <TabsTrigger value="chill" className="data-[state=active]:bg-primary data-[state=active]:text-white">Liens Chill</TabsTrigger>
                 <TabsTrigger value="nsfw" className="data-[state=active]:bg-pink-600 data-[state=active]:text-white">Liens NSFW</TabsTrigger>
               </TabsList>
-            </Tabs>
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher une campagne ou URL..."
-                className="pl-9 bg-white/5 border-white/10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher une campagne ou URL..."
+                  className="pl-9 bg-white/5 border-white/10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
             <TabsContent value="all" className="m-0"><LinksTable typeFilter="all" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} searchQuery={searchQuery} /></TabsContent>
             <TabsContent value="chill" className="m-0"><LinksTable typeFilter="chill" links={links} onCopy={handleCopy} onToggle={toggleLinkActive} copiedLink={copiedLink} searchQuery={searchQuery} /></TabsContent>
