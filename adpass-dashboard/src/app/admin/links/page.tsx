@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Check, X } from "lucide-react";
+import { ExternalLink, Check, X, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +18,7 @@ export default function AdminLinksPage() {
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleApprove = (id: string) => {
     updateLinkStatus(id, "active");
@@ -40,7 +41,16 @@ export default function AdminLinksPage() {
   };
 
   const renderTable = (filterStatus: string) => {
-    const filtered = adminLinks.filter((l) => l.status === filterStatus);
+    let filtered = adminLinks.filter((l) => l.status === filterStatus);
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter((l) =>
+        (l.affiliate?.toLowerCase().includes(q)) ||
+        (l.campaign?.toLowerCase().includes(q)) ||
+        (l.destination?.toLowerCase().includes(q))
+      );
+    }
 
     return (
       <Table>
@@ -105,14 +115,26 @@ export default function AdminLinksPage() {
 
       <Card className="border-rose-500/20">
         <CardContent className="p-0 sm:p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="px-4 pt-4 sm:px-0 sm:pt-0 mb-6">
-              <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg">
+          <div className="p-4 sm:p-0 mb-6 flex flex-col sm:flex-row justify-between gap-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+              <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg w-full sm:w-auto">
                 <TabsTrigger value="pending" className="data-[state=active]:bg-rose-500 data-[state=active]:text-white">En attente de validation</TabsTrigger>
                 <TabsTrigger value="active" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white">Liens actifs</TabsTrigger>
                 <TabsTrigger value="rejected" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-white">Liens rejetés</TabsTrigger>
               </TabsList>
+            </Tabs>
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher par affilié, campagne..."
+                className="pl-9 bg-white/5 border-white/10 border-rose-500/10 focus:ring-rose-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
             <TabsContent value="pending" className="m-0">{renderTable("pending")}</TabsContent>
             <TabsContent value="active" className="m-0">{renderTable("active")}</TabsContent>

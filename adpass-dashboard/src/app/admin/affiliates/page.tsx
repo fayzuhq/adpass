@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserX, UserCheck, DollarSign } from "lucide-react";
+import { UserX, UserCheck, DollarSign, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,8 @@ export default function AdminAffiliatesPage() {
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [selectedAffiliateId, setSelectedAffiliateId] = useState<string | null>(null);
   const [balanceAdjustment, setBalanceAdjustment] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const handleToggleSuspend = (id: string) => {
     setAffiliates(affiliates.map(a => {
@@ -51,6 +53,20 @@ export default function AdminAffiliatesPage() {
     }
   };
 
+  let filteredAffiliates = affiliates;
+
+  if (statusFilter !== "all") {
+    filteredAffiliates = filteredAffiliates.filter(a => a.status === statusFilter);
+  }
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filteredAffiliates = filteredAffiliates.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.email.toLowerCase().includes(q)
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
@@ -59,6 +75,26 @@ export default function AdminAffiliatesPage() {
       </div>
 
       <Card className="border-rose-500/20">
+        <div className="p-4 border-b border-white/5 flex flex-col sm:flex-row justify-between gap-4">
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher un pseudo ou email..."
+              className="pl-9 bg-white/5 border-white/10 border-rose-500/10 focus:ring-rose-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <select
+            className="bg-black/50 border border-white/10 rounded-md px-3 py-2 text-sm text-white outline-none focus:ring-1 focus:ring-rose-500"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">Tous les statuts</option>
+            <option value="active">Actifs uniquement</option>
+            <option value="suspended">Suspendus uniquement</option>
+          </select>
+        </div>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -74,7 +110,7 @@ export default function AdminAffiliatesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {affiliates.map((affiliate) => (
+              {filteredAffiliates.map((affiliate) => (
                 <TableRow key={affiliate.id} className="border-rose-500/10 hover:bg-white/5">
                   <TableCell>
                     <div className="font-medium text-foreground">{affiliate.name}</div>
