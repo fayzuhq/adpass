@@ -12,7 +12,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const { maintenanceMode } = useSettingsStore();
 
   const publicRoutes = ['/', '/auth', '/cgu', '/confidentialite', '/mentions-legales', '/docs', '/contact', '/maintenance'];
-  const isPublicPage = publicRoutes.includes(pathname);
+  const isPublicPage = publicRoutes.includes(pathname) || pathname.startsWith("/v/");
   const isAdminPage = pathname.startsWith("/admin");
   const isMaintenancePage = pathname === "/maintenance";
 
