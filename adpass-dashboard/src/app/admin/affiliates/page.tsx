@@ -10,6 +10,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
 import { useAffiliatesStore } from "@/lib/store";
+import { toast } from "@/components/ui/use-toast";
 
 export default function AdminAffiliatesPage() {
   const { affiliates, setAffiliates } = useAffiliatesStore();
@@ -23,7 +24,9 @@ export default function AdminAffiliatesPage() {
   const handleToggleSuspend = (id: string) => {
     setAffiliates(affiliates.map(a => {
       if (a.id === id) {
-        return { ...a, status: a.status === "active" ? "suspended" : "active" };
+        const newStatus = a.status === "active" ? "suspended" : "active";
+        toast({ message: `Compte ${newStatus === 'active' ? 'réactivé' : 'suspendu'}` });
+        return { ...a, status: newStatus };
       }
       return a;
     }));
@@ -49,6 +52,7 @@ export default function AdminAffiliatesPage() {
         }
         return a;
       }));
+      toast({ message: "Solde ajusté avec succès" });
       setBalanceModalOpen(false);
     }
   };
