@@ -35,7 +35,7 @@ export default function AdminPayoutsPage() {
   const handleMarkPaid = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedPayoutId) {
-      updatePayoutStatus(selectedPayoutId, "paid");
+      updatePayoutStatus(selectedPayoutId, "completed");
       toast({ message: "Paiement marqué comme validé" });
       setPayModalOpen(false);
     }
@@ -95,7 +95,7 @@ export default function AdminPayoutsPage() {
                   </TableCell>
                   <TableCell className="text-center">
                     {payout.status === "pending" && <Badge variant="outline" className="text-orange-500 border-orange-500/30 bg-orange-500/10">En attente</Badge>}
-                    {payout.status === "paid" && <Badge variant="outline" className="text-success border-success/30 bg-success/10">Payé</Badge>}
+                    {payout.status === "completed" && <Badge variant="outline" className="text-success border-success/30 bg-success/10">Payé</Badge>}
                     {payout.status === "rejected" && <Badge variant="outline" className="text-danger border-danger/30 bg-danger/10">Rejeté</Badge>}
                   </TableCell>
                   <TableCell className="text-right">

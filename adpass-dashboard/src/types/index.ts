@@ -18,6 +18,7 @@ export interface User {
   password?: string;
   targetUrl?: string;
   links?: number;
+  date?: string; // To match mockData property
 }
 
 export interface AffiliateLink {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { mockLinks, mockAdminLinks, mockPayouts, mockAdminPayouts } from './mockData';
-import { AffiliateLink, PayoutRequest } from '@/types';
+import { mockLinks, mockAdminLinks, mockPayouts, mockAdminPayouts, mockAffiliates } from './mockData';
+import { AffiliateLink, PayoutRequest, User } from '@/types';
 
 // Helper to get from local storage or fallback to mock
 const getFromStorage = <T,>(key: string, initialData: T): T => {
@@ -36,7 +36,7 @@ export function useLinksStore() {
 
   const updateLinkStatus = (id: string, status: string) => {
     setAdminLinks((prev) => prev.map((l) => l.id === id ? { ...l, status } : l));
-    setLinks((prev) => prev.map((l) => l.id === id ? { ...l, moderationStatus: status === 'active' ? 'active' : 'pending' } : l));
+    setLinks((prev) => prev.map((l) => l.id === id ? { ...l, moderationStatus: status as "pending" | "active" | "rejected" } : l));
   };
 
   return { links, setLinks, adminLinks, setAdminLinks, addLink, updateLinkStatus };
@@ -77,4 +77,15 @@ export function useSettingsStore() {
   }, [maintenanceMode]);
 
   return { maintenanceMode, setMaintenanceMode };
+}
+
+// Hook for Affiliates
+export function useAffiliatesStore() {
+  const [affiliates, setAffiliates] = useState<User[]>(() => getFromStorage('adpass_affiliates', mockAffiliates as unknown as User[]));
+
+  useEffect(() => {
+    localStorage.setItem('adpass_affiliates', JSON.stringify(affiliates));
+  }, [affiliates]);
+
+  return { affiliates, setAffiliates };
 }

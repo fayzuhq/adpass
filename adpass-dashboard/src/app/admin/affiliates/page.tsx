@@ -8,11 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
-import { mockAffiliates } from "@/lib/mockData";
 import { formatCurrency } from "@/lib/utils";
+import { useAffiliatesStore } from "@/lib/store";
 
 export default function AdminAffiliatesPage() {
-  const [affiliates, setAffiliates] = useState(mockAffiliates);
+  const { affiliates, setAffiliates } = useAffiliatesStore();
 
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [selectedAffiliateId, setSelectedAffiliateId] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function AdminAffiliatesPage() {
   };
 
   const handleTierChange = (id: string, newTier: string) => {
-    setAffiliates(affiliates.map(a => a.id === id ? { ...a, tier: newTier } : a));
+    setAffiliates(affiliates.map(a => a.id === id ? { ...a, tier: newTier as "Standard" | "Pro" | "Élite" } : a));
   };
 
   const openBalanceModal = (id: string) => {
