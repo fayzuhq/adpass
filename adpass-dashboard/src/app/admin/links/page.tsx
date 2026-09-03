@@ -13,6 +13,7 @@ import { mockAdminLinks } from "@/lib/mockData";
 
 export default function AdminLinksPage() {
   const [links, setLinks] = useState(mockAdminLinks);
+  const [activeTab, setActiveTab] = useState("pending");
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
@@ -101,7 +102,7 @@ export default function AdminLinksPage() {
 
       <Card className="border-rose-500/20">
         <CardContent className="p-0 sm:p-6">
-          <Tabs value="pending" onValueChange={() => {}} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="px-4 pt-4 sm:px-0 sm:pt-0 mb-6">
               <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg">
                 <TabsTrigger value="pending" className="data-[state=active]:bg-rose-500 data-[state=active]:text-white">En attente de validation</TabsTrigger>

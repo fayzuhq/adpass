@@ -4,17 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Link as LinkIcon, Users, Wallet, Settings, LogOut, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { name: "Vue d'ensemble", href: "/admin", icon: LayoutDashboard },
-  { name: "Modération des liens", href: "/admin/links", icon: LinkIcon, badge: 2 },
-  { name: "Gestion des affiliés", href: "/admin/affiliates", icon: Users },
-  { name: "Demandes de retraits", href: "/admin/payouts", icon: Wallet, badge: 1, badgeColor: "orange" },
-  { name: "Configuration", href: "/admin/settings", icon: Settings },
-];
+import { mockAdminLinks, mockAdminPayouts } from "@/lib/mockData";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+
+  const pendingLinksCount = mockAdminLinks.filter(l => l.status === "pending").length;
+  const pendingPayoutsCount = mockAdminPayouts.filter(p => p.status === "pending").length;
+
+  const navigation = [
+    { name: "Vue d'ensemble", href: "/admin", icon: LayoutDashboard },
+    { name: "Modération des liens", href: "/admin/links", icon: LinkIcon, badge: pendingLinksCount > 0 ? pendingLinksCount : undefined },
+    { name: "Gestion des affiliés", href: "/admin/affiliates", icon: Users },
+    { name: "Demandes de retraits", href: "/admin/payouts", icon: Wallet, badge: pendingPayoutsCount > 0 ? pendingPayoutsCount : undefined, badgeColor: "orange" },
+    { name: "Configuration", href: "/admin/settings", icon: Settings },
+  ];
 
   return (
     <aside className="w-64 border-r border-white/10 fixed left-0 top-0 bottom-0 bg-[#07080B] flex flex-col z-40">

@@ -81,6 +81,7 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
 
 export default function LinksPage() {
   const [links, setLinks] = useState(mockLinks);
+  const [activeTab, setActiveTab] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
@@ -113,7 +114,7 @@ export default function LinksPage() {
 
       <Card>
         <CardContent className="p-0 sm:p-6">
-          <Tabs value="all" onValueChange={() => {}} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="px-4 pt-4 sm:px-0 sm:pt-0 mb-6">
               <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg">
                 <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white">Tous les liens</TabsTrigger>
