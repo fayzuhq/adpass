@@ -351,17 +351,17 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold mb-4">Légal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-white transition-colors">CGU</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Confidentialité</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Mentions légales</Link></li>
+                <li><Link href="/cgu" className="hover:text-white transition-colors">CGU</Link></li>
+                <li><Link href="/confidentialite" className="hover:text-white transition-colors">Confidentialité</Link></li>
+                <li><Link href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Discord</Link></li>
+                <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><a href="https://discord.gg/adpass" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Discord</a></li>
               </ul>
             </div>
           </div>
