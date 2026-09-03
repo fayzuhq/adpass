@@ -10,28 +10,43 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Modal } from "@/components/ui/modal";
 import { formatCurrency } from "@/lib/utils";
 import { mockPayouts } from "@/lib/mockData";
+import { usePayoutsStore } from "@/lib/store";
 
 export default function PayoutsPage() {
+  const { history, addPayoutRequest } = usePayoutsStore();
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [cryptoSelect, setCryptoSelect] = useState<"USDT" | "LTC">("USDT");
   const [walletAddress, setWalletAddress] = useState("");
-  const [history, setHistory] = useState(mockPayouts.history);
 
   const handleWithdrawSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (parseFloat(withdrawAmount) < 20) return;
 
+    const newId = `wd-${Date.now()}`;
+    const date = new Date().toISOString().split("T")[0];
+    const amount = parseFloat(withdrawAmount);
+
     const newRequest = {
-      id: `wd-${Date.now()}`,
-      date: new Date().toISOString().split("T")[0],
-      amount: parseFloat(withdrawAmount),
+      id: newId,
+      date,
+      amount,
       crypto: cryptoSelect,
       address: walletAddress.substring(0, 4) + "..." + walletAddress.substring(walletAddress.length - 4),
       status: "pending"
     };
 
-    setHistory([newRequest, ...history]);
+    const newAdminRequest = {
+      id: newId,
+      date,
+      affiliate: "Raph_Affiliate",
+      amount,
+      crypto: cryptoSelect,
+      wallet: walletAddress,
+      status: "pending"
+    };
+
+    addPayoutRequest(newRequest, newAdminRequest);
     setIsWithdrawModalOpen(false);
     setWithdrawAmount("");
     setWalletAddress("");

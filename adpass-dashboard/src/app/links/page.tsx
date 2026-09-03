@@ -12,6 +12,8 @@ import { Modal } from "@/components/ui/modal";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency } from "@/lib/utils";
 import { mockLinks } from "@/lib/mockData";
+import { useLinksStore } from "@/lib/store";
+import { toast } from "@/components/ui/use-toast";
 
 type Link = typeof mockLinks[0];
 
@@ -80,7 +82,7 @@ const LinksTable = ({ typeFilter, links, onCopy, onToggle, copiedLink }: { typeF
 };
 
 export default function LinksPage() {
-  const [links, setLinks] = useState(mockLinks);
+  const { links, setLinks, addLink } = useLinksStore();
   const [activeTab, setActiveTab] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
@@ -88,15 +90,17 @@ export default function LinksPage() {
   const [newLinkType, setNewLinkType] = useState<"chill" | "nsfw">("chill");
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkSlug, setNewLinkSlug] = useState("");
+  const [newLinkDestination, setNewLinkDestination] = useState("");
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
     setCopiedLink(url);
+    toast({ message: "Lien copié dans le presse-papier" });
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
   const toggleLinkActive = (id: string) => {
-    setLinks(links.map(link => link.id === id ? { ...link, active: !link.active } : link));
+    setLinks((prev) => prev.map((link) => link.id === id ? { ...link, active: !link.active } : link));
   };
 
   return (
@@ -137,8 +141,9 @@ export default function LinksPage() {
           const domain = newLinkType === 'chill' ? 'chillvault.co/v/' : 'passlocker.net/v/';
           const fullUrl = `https://${domain}${newLinkSlug || `generated-${Date.now().toString().slice(-4)}`}`;
 
+          const newLinkId = `link-${Date.now()}`;
           const newLinkItem = {
-            id: `link-${Date.now()}`,
+            id: newLinkId,
             name: newLinkName || "Nouveau Lien",
             url: fullUrl,
             type: newLinkType,
@@ -151,9 +156,23 @@ export default function LinksPage() {
             active: true
           };
 
-          setLinks(prev => [newLinkItem, ...prev]);
+          const newAdminLink = {
+            id: newLinkId,
+            date: new Date().toISOString().split('T')[0],
+            affiliate: "Raph_Affiliate",
+            campaign: newLinkName || "Nouveau Lien",
+            type: newLinkType,
+            url: fullUrl,
+            destination: newLinkDestination || "https://example.com",
+            status: "pending"
+          };
+
+          addLink(newLinkItem, newAdminLink);
+          toast({ message: "Lien soumis pour modération" });
+
           setNewLinkName("");
           setNewLinkSlug("");
+          setNewLinkDestination("");
           setIsModalOpen(false);
         }}>
           <div className="space-y-2">
@@ -204,7 +223,13 @@ export default function LinksPage() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">URL de destination finale</label>
-            <Input type="url" placeholder="https://..." required />
+            <Input
+              type="url"
+              placeholder="https://..."
+              value={newLinkDestination}
+              onChange={(e) => setNewLinkDestination(e.target.value)}
+              required
+            />
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-white/10">

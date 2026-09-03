@@ -1,15 +1,27 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import AdminSidebar from "@/components/AdminSidebar";
+import { useSettingsStore } from "@/lib/store";
+import { useEffect, useState } from "react";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { maintenanceMode } = useSettingsStore();
+
   const isPublicPage = pathname === "/" || pathname === "/auth";
   const isAdminPage = pathname.startsWith("/admin");
+  const isMaintenancePage = pathname === "/maintenance";
 
-  if (isPublicPage) {
+  useEffect(() => {
+    if (maintenanceMode && !isAdminPage && !isPublicPage && !isMaintenancePage) {
+      router.push("/maintenance");
+    }
+  }, [maintenanceMode, isAdminPage, isPublicPage, isMaintenancePage, router, pathname]);
+
+  if (isPublicPage || isMaintenancePage) {
     return (
       <main className="flex-1 w-full min-h-screen flex flex-col">
         {children}

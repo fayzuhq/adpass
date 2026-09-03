@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/utils";
 import { mockDashboardMetrics, mockQuickLinks, mockChartData, mockRecentActivities } from "@/lib/mockData";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
 export default function DashboardPage() {
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
     setCopiedLink(url);
+    toast({ message: "Lien copié dans le presse-papier" });
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
