@@ -9,17 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
-import { mockAdminLinks } from "@/lib/mockData";
+import { useLinksStore } from "@/lib/store";
+import { toast } from "@/components/ui/use-toast";
 
 export default function AdminLinksPage() {
-  const [links, setLinks] = useState(mockAdminLinks);
+  const { adminLinks, updateLinkStatus } = useLinksStore();
   const [activeTab, setActiveTab] = useState("pending");
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
   const handleApprove = (id: string) => {
-    setLinks(links.map(l => l.id === id ? { ...l, status: "active" } : l));
+    updateLinkStatus(id, "active");
+    toast({ message: "Statut du lien mis à jour" });
   };
 
   const openRejectModal = (id: string) => {
@@ -31,13 +33,14 @@ export default function AdminLinksPage() {
   const handleReject = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedLinkId) {
-      setLinks(links.map(l => l.id === selectedLinkId ? { ...l, status: "rejected" } : l));
+      updateLinkStatus(selectedLinkId, "rejected");
+      toast({ message: "Statut du lien mis à jour" });
       setRejectModalOpen(false);
     }
   };
 
   const renderTable = (filterStatus: string) => {
-    const filtered = links.filter(l => l.status === filterStatus);
+    const filtered = adminLinks.filter((l) => l.status === filterStatus);
 
     return (
       <Table>

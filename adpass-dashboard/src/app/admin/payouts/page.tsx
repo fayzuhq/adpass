@@ -8,11 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
-import { mockAdminPayouts } from "@/lib/mockData";
 import { formatCurrency } from "@/lib/utils";
+import { usePayoutsStore } from "@/lib/store";
+import { toast } from "@/components/ui/use-toast";
 
 export default function AdminPayoutsPage() {
-  const [payouts, setPayouts] = useState(mockAdminPayouts);
+  const { adminPayouts, updatePayoutStatus } = usePayoutsStore();
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null);
 
   const [payModalOpen, setPayModalOpen] = useState(false);
@@ -34,14 +35,15 @@ export default function AdminPayoutsPage() {
   const handleMarkPaid = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedPayoutId) {
-      setPayouts(payouts.map(p => p.id === selectedPayoutId ? { ...p, status: "paid" } : p));
+      updatePayoutStatus(selectedPayoutId, "paid");
+      toast({ message: "Paiement marqué comme validé" });
       setPayModalOpen(false);
     }
   };
 
   const handleReject = (id: string) => {
     if (confirm("Êtes-vous sûr de vouloir rejeter cette demande ? Le solde sera recrédité à l'affilié.")) {
-      setPayouts(payouts.map(p => p.id === id ? { ...p, status: "rejected" } : p));
+      updatePayoutStatus(id, "rejected");
     }
   };
 
@@ -67,7 +69,7 @@ export default function AdminPayoutsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {payouts.map((payout) => (
+              {adminPayouts.map((payout) => (
                 <TableRow key={payout.id} className="border-rose-500/10 hover:bg-white/5">
                   <TableCell className="text-xs text-muted-foreground">{payout.date}</TableCell>
                   <TableCell className="font-medium text-foreground">{payout.affiliate}</TableCell>

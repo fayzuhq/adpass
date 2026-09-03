@@ -6,10 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useSettingsStore } from "@/lib/store";
 
 export default function AdminSettingsPage() {
   const [isSaved, setIsSaved] = useState(false);
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const { maintenanceMode, setMaintenanceMode } = useSettingsStore();
 
   const [config, setConfig] = useState({
     domainChill: "chillvault.co",

@@ -4,13 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Link as LinkIcon, Users, Wallet, Settings, LogOut, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mockAdminLinks, mockAdminPayouts } from "@/lib/mockData";
+import { useLinksStore, usePayoutsStore } from "@/lib/store";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { adminLinks } = useLinksStore();
+  const { adminPayouts } = usePayoutsStore();
 
-  const pendingLinksCount = mockAdminLinks.filter(l => l.status === "pending").length;
-  const pendingPayoutsCount = mockAdminPayouts.filter(p => p.status === "pending").length;
+  const pendingLinksCount = adminLinks.filter((l) => l.status === "pending").length;
+  const pendingPayoutsCount = adminPayouts.filter((p) => p.status === "pending").length;
 
   const navigation = [
     { name: "Vue d'ensemble", href: "/admin", icon: LayoutDashboard },
