@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { AlertTriangle, Lock, PlayCircle, Star, CheckCircle2, CreditCard, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Lock, Star, CheckCircle2, CreditCard, ShieldCheck, VolumeX, Eye, Unlock } from "lucide-react";
 import { useLinksStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,14 @@ const pricingPlans = [
   { id: "yearly", label: "Annuel", priceText: "41,99 € / an", badge: "-87%", originalPrice: "335,88 €", price: 41.99 },
 ];
 
+const fomoMessages = [
+  "Un utilisateur de Paris vient de débloquer l'accès",
+  "Nouvel accès VIP activé depuis Lyon",
+  "Un utilisateur vient de choisir l'offre Essai",
+  "Un membre de Marseille vient de s'abonner",
+  "Nouveau membre VIP Premium connecté",
+];
+
 export default function LockerPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const { links } = useLinksStore();
@@ -23,9 +31,31 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
   const [selectedPlan, setSelectedPlan] = useState(pricingPlans[0]);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
+
+  // FOMO Logic
+  const [fomoToast, setFomoToast] = useState<{ message: string; timeAgo: number } | null>(null);
+
+  useEffect(() => {
+    if (!isAgeVerified) return;
+    const interval = setInterval(() => {
+      // 30% chance to not show anything this tick to make it feel natural
+      if (Math.random() > 0.3) {
+        const randomMsg = fomoMessages[Math.floor(Math.random() * fomoMessages.length)];
+        const randomSeconds = Math.floor(Math.random() * 20) + 2;
+        setFomoToast({ message: randomMsg, timeAgo: randomSeconds });
+
+        // Hide after 4 seconds
+        setTimeout(() => setFomoToast(null), 4000);
+      }
+    }, 8000 + Math.random() * 4000); // Between 8s and 12s
+
+    return () => clearInterval(interval);
+  }, [isAgeVerified]);
+
 
   // Timer logic
   const [timeLeft, setTimeLeft] = useState(0);
@@ -63,12 +93,13 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
     setTimeout(() => {
       setIsProcessing(false);
       setIsPaymentModalOpen(false);
-      toast({ message: "Paiement validé !" });
+      setIsUnlocked(true);
+      toast({ message: "Accès débloqué avec succès !" });
 
       // Simulate unlock redirect
       setTimeout(() => {
         window.location.href = destinationUrl;
-      }, 500);
+      }, 2000);
     }, 2000);
   };
 
@@ -97,6 +128,33 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
   return (
     <div className="relative min-h-screen bg-[#07080B] text-foreground overflow-hidden font-sans">
 
+      {/* Unlock Success Animation Overlay */}
+      {isUnlocked && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-3xl transition-all duration-500">
+          <div className="flex flex-col items-center animate-in zoom-in-50 fade-in duration-500">
+            <div className="relative">
+               <div className="absolute inset-0 bg-emerald-500/40 blur-[100px] rounded-full scale-150" />
+               <Unlock className="w-32 h-32 text-emerald-400 scale-125 transition-transform duration-500 relative z-10" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mt-12 mb-2">Accès Débloqué</h2>
+            <p className="text-emerald-400/80">Redirection vers la galerie VIP...</p>
+          </div>
+        </div>
+      )}
+
+
+      {/* FOMO Toast */}
+      <div className={`fixed bottom-6 left-6 z-50 transition-all duration-500 transform ${fomoToast ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+        <div className="bg-black/80 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full shadow-2xl flex items-center gap-3">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse-fast shrink-0 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-white">{fomoToast?.message}</span>
+            <span className="text-xs text-muted-foreground">il y a {fomoToast?.timeAgo}s</span>
+          </div>
+        </div>
+      </div>
+
+
       {/* Background Fake Gallery (Blurred) */}
       <div className={`absolute inset-0 transition-all duration-1000 ${isAgeVerified ? 'blur-xl opacity-30 select-none pointer-events-none' : 'blur-3xl opacity-20'}`}>
         <header className="p-6 border-b border-white/10 flex items-center justify-between">
@@ -119,8 +177,33 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
           <h1 className="text-4xl font-bold text-white">{pageTitle}</h1>
 
           <div className="aspect-video w-full bg-zinc-950 rounded-2xl flex items-center justify-center border border-white/10 relative overflow-hidden shadow-2xl">
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-             <PlayCircle className="w-32 h-32 text-white/50 relative z-10" />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
+
+             {/* Dynamic Video Player Elements */}
+             <div className="absolute top-6 left-6 z-20 flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-rose-600 text-white px-3 py-1 rounded text-xs font-bold tracking-widest shadow-[0_0_15px_rgba(225,29,72,0.5)]">
+                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  EN DIRECT
+                </div>
+                <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-sm px-3 py-1 rounded text-xs text-white/90">
+                  <Eye className="w-3.5 h-3.5" />
+                  1 480 visionnages en cours
+                </div>
+             </div>
+
+             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
+                <div className="h-full bg-rose-500 animate-[progress-bar_10s_linear_infinite]" />
+             </div>
+
+             <div className="relative z-10 flex flex-col items-center gap-4 text-white/50">
+               <div className="relative flex items-center justify-center">
+                 {/* Fake sound waves */}
+                 <div className="absolute w-24 h-24 border-2 border-white/20 rounded-full animate-ping" />
+                 <div className="absolute w-32 h-32 border border-white/10 rounded-full animate-ping delay-150" />
+                 <VolumeX className="w-16 h-16 animate-pulse-fast relative z-10" />
+               </div>
+               <span className="text-sm font-bold tracking-widest">SON COUPÉ</span>
+             </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -169,96 +252,107 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
       )}
 
       {/* Paywall Overlay */}
-      {isAgeVerified && (
+      {isAgeVerified && !isUnlocked && (
         <div className="absolute inset-0 z-40 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          <div className="w-full max-w-4xl bg-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-700">
 
-            <div className="p-6 sm:p-10">
-              <div className="text-center mb-8">
-                <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">CHOISIS TA FORMULE</span>
-              </div>
+          {/* Border Beam Wrapper */}
+          <div className="w-full max-w-4xl relative overflow-hidden p-[1px] rounded-3xl animate-in zoom-in-95 fade-in duration-700 shadow-2xl">
+            {/* The Beam */}
+            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(244,63,94,1)_360deg)] animate-border-spin mix-blend-screen" />
+            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_180deg,transparent_0_340deg,rgba(99,102,241,1)_360deg)] animate-border-spin mix-blend-screen" />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                {/* Left Column: Timer & Trust */}
-                <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left space-y-6">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    OFFRE DE LANCEMENT
-                  </div>
+            {/* Inner Content */}
+            <div className="w-full bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-[calc(1.5rem-1px)] overflow-hidden relative z-10">
 
-                  <div>
-                    <div className="text-5xl tabular-nums font-mono font-bold text-white tracking-tighter mb-2">
-                      {String(hours).padStart(2, '0')} : {String(minutes).padStart(2, '0')} : {String(seconds).padStart(2, '0')}
-                    </div>
-                    <p className="text-muted-foreground">Se termine à minuit</p>
-                  </div>
-
-                  <div className="flex flex-col items-center lg:items-start pt-6 border-t border-white/5 w-full">
-                    <div className="flex gap-1 mb-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-zinc-300 font-medium">4,9/5 par des milliers de membres</p>
-                  </div>
+              <div className="p-6 sm:p-10">
+                <div className="text-center mb-8">
+                  <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">CHOISIS TA FORMULE</span>
                 </div>
 
-                {/* Right Column: Pricing & Benefits */}
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    {pricingPlans.map((plan) => (
-                      <div
-                        key={plan.id}
-                        className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan.id === plan.id ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.15)] scale-[1.02]' : 'border-white/5 bg-white/5 hover:border-white/20'}`}
-                        onClick={() => setSelectedPlan(plan)}
-                      >
-                        {plan.badge && (
-                          <span className={`absolute -top-3 right-4 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${selectedPlan.id === plan.id ? 'bg-indigo-500 text-white' : 'bg-zinc-700 text-white'}`}>
-                            {plan.badge}
-                          </span>
-                        )}
-                        <div className="flex items-center gap-3">
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedPlan.id === plan.id ? 'border-indigo-500' : 'border-zinc-600'}`}>
-                            {selectedPlan.id === plan.id && <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className={`font-semibold ${selectedPlan.id === plan.id ? 'text-indigo-100' : 'text-zinc-300'}`}>{plan.label}</h3>
-                          </div>
-                          <div className="text-right">
-                            {plan.originalPrice && <div className="text-xs text-muted-foreground line-through">{plan.originalPrice}</div>}
-                            <div className="font-mono font-bold text-white">{plan.priceText}</div>
-                          </div>
-                        </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                  {/* Left Column: Timer & Trust */}
+                  <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left space-y-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      OFFRE DE LANCEMENT
+                    </div>
+
+                    <div>
+                      <div className="text-5xl tabular-nums font-mono font-bold text-white tracking-tighter mb-2">
+                        {String(hours).padStart(2, '0')} : {String(minutes).padStart(2, '0')} : {String(seconds).padStart(2, '0')}
                       </div>
-                    ))}
+                      <p className="text-muted-foreground">Se termine à minuit</p>
+                    </div>
+
+                    <div className="flex flex-col items-center lg:items-start pt-6 border-t border-white/5 w-full">
+                      <div className="flex gap-1 mb-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                      <p className="text-sm text-zinc-300 font-medium">4,9/5 par des milliers de membres</p>
+                    </div>
                   </div>
 
-                  <ul className="space-y-3 pt-4 border-t border-white/5">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
-                      <span className="text-sm text-zinc-300">Déblocage instantané, zéro attente</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
-                      <span className="text-sm text-zinc-300">Accès illimité sur tous vos appareils</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
-                      <span className="text-sm text-zinc-300">Résiliable en 1 clic à tout moment</span>
-                    </li>
-                  </ul>
+                  {/* Right Column: Pricing & Benefits */}
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      {pricingPlans.map((plan) => (
+                        <div
+                          key={plan.id}
+                          className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedPlan.id === plan.id ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.15)] scale-[1.02]' : 'border-white/5 bg-white/5 hover:border-white/20'}`}
+                          onClick={() => setSelectedPlan(plan)}
+                        >
+                          {plan.badge && (
+                            <span className={`absolute -top-3 right-4 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${selectedPlan.id === plan.id ? 'bg-indigo-500 text-white' : 'bg-zinc-700 text-white'}`}>
+                              {plan.badge}
+                            </span>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedPlan.id === plan.id ? 'border-indigo-500' : 'border-zinc-600'}`}>
+                              {selectedPlan.id === plan.id && <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className={`font-semibold ${selectedPlan.id === plan.id ? 'text-indigo-100' : 'text-zinc-300'}`}>{plan.label}</h3>
+                            </div>
+                            <div className="text-right">
+                              {plan.originalPrice && <div className="text-xs text-muted-foreground line-through">{plan.originalPrice}</div>}
+                              <div className="font-mono font-bold text-white">{plan.priceText}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-                  <div className="pt-2">
-                    <Button
-                      className="w-full py-7 text-lg font-bold bg-gradient-to-r from-indigo-600 via-purple-500 to-rose-500 text-white rounded-xl shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] hover:scale-[1.02] active:scale-95 transition-all border-none"
-                      onClick={() => setIsPaymentModalOpen(true)}
-                    >
-                      Commencer pour {selectedPlan.price} € →
-                    </Button>
-                    <p className="text-center text-[10px] text-muted-foreground mt-4 leading-relaxed">
-                      Sans engagement, résiliable à tout moment.<br/>
-                      Paiement sécurisé : Carte, Apple Pay, Crypto.
-                    </p>
+                    <ul className="space-y-3 pt-4 border-t border-white/5">
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
+                        <span className="text-sm text-zinc-300">Déblocage instantané, zéro attente</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
+                        <span className="text-sm text-zinc-300">Accès illimité sur tous vos appareils</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
+                        <span className="text-sm text-zinc-300">Résiliable en 1 clic à tout moment</span>
+                      </li>
+                    </ul>
+
+                    <div className="pt-2">
+                      <Button
+                        className="relative overflow-hidden w-full py-7 text-lg font-bold bg-gradient-to-r from-indigo-600 via-purple-500 to-rose-500 text-white rounded-xl shadow-[0_0_30px_rgba(244,63,94,0.35)] hover:shadow-[0_0_45px_rgba(244,63,94,0.6)] hover:scale-[1.02] active:scale-95 transition-all border-none group"
+                        onClick={() => setIsPaymentModalOpen(true)}
+                      >
+                        {/* Shimmer Effect */}
+                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-15deg] group-hover:animate-shimmer animate-[shimmer_3s_infinite]" />
+                        <span className="relative z-10">Commencer pour {selectedPlan.price} € →</span>
+                      </Button>
+                      <p className="text-center text-[10px] text-muted-foreground mt-4 leading-relaxed">
+                        Sans engagement, résiliable à tout moment.<br/>
+                        Paiement sécurisé : Carte, Apple Pay, Crypto.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

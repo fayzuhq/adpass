@@ -60,3 +60,40 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@theme {
+  --animate-border-spin: border-spin 4s linear infinite;
+  --animate-shimmer: shimmer 3s ease-in-out infinite;
+  --animate-progress-bar: progress-bar 10s linear infinite;
+  --animate-pulse-fast: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes border-spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-150%) skewX(-15deg);
+    }
+    50%, 100% {
+      transform: translateX(150%) skewX(-15deg);
+    }
+  }
+  @keyframes progress-bar {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+  @keyframes pulse-fast {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
