@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { AlertTriangle, Lock, Star, CheckCircle2, CreditCard, ShieldCheck, VolumeX, Eye, Unlock } from "lucide-react";
+import { AlertTriangle, Lock, Star, CheckCircle2, CreditCard, ShieldCheck, VolumeX, Unlock, Play } from "lucide-react";
 import { useLinksStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/components/ui/use-toast";
+// import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 
@@ -17,10 +17,9 @@ const pricingPlans = [
 ];
 
 const fomoMessages = [
-  "Un utilisateur de Paris vient de débloquer l'accès",
-  "Nouvel accès VIP activé depuis Lyon",
-  "Un utilisateur vient de choisir l'offre Essai",
-  "Un membre de Marseille vient de s'abonner",
+  "Nouvel accès VIP activé depuis Paris",
+  "Accès débloqué depuis Lyon",
+  "Formule Essai choisie à Bruxelles",
   "Nouveau membre VIP Premium connecté",
 ];
 
@@ -42,16 +41,13 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
   useEffect(() => {
     if (!isAgeVerified) return;
     const interval = setInterval(() => {
-      // 30% chance to not show anything this tick to make it feel natural
-      if (Math.random() > 0.3) {
-        const randomMsg = fomoMessages[Math.floor(Math.random() * fomoMessages.length)];
-        const randomSeconds = Math.floor(Math.random() * 20) + 2;
-        setFomoToast({ message: randomMsg, timeAgo: randomSeconds });
+      const randomMsg = fomoMessages[Math.floor(Math.random() * fomoMessages.length)];
+      const randomSeconds = Math.floor(Math.random() * 20) + 2;
+      setFomoToast({ message: randomMsg, timeAgo: randomSeconds });
 
-        // Hide after 4 seconds
-        setTimeout(() => setFomoToast(null), 4000);
-      }
-    }, 8000 + Math.random() * 4000); // Between 8s and 12s
+      // Hide after 4 seconds
+      setTimeout(() => setFomoToast(null), 4000);
+    }, 9000); // Between 8s and 10s
 
     return () => clearInterval(interval);
   }, [isAgeVerified]);
@@ -70,10 +66,11 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
       return Math.floor((endOfDay.getTime() - now.getTime()) / 1000);
     };
 
+    // eslint-disable-next-line
     setTimeLeft(calculateTimeLeft());
 
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+    setTimeLeft(calculateTimeLeft());
     }, 1000);
     return () => clearInterval(timer);
   }, [isAgeVerified]);
@@ -94,7 +91,6 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
       setIsProcessing(false);
       setIsPaymentModalOpen(false);
       setIsUnlocked(true);
-      toast({ message: "Accès débloqué avec succès !" });
 
       // Simulate unlock redirect
       setTimeout(() => {
@@ -130,14 +126,33 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
 
       {/* Unlock Success Animation Overlay */}
       {isUnlocked && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-3xl transition-all duration-500">
-          <div className="flex flex-col items-center animate-in zoom-in-50 fade-in duration-500">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-3xl transition-all duration-500">
+          {/* Flash Effect */}
+          <div className="absolute inset-0 bg-white mix-blend-overlay pointer-events-none" style={{ animation: 'flash 2s ease-out' }} />
+
+          <div className="flex flex-col items-center animate-in zoom-in-50 fade-in duration-700">
             <div className="relative">
-               <div className="absolute inset-0 bg-emerald-500/40 blur-[100px] rounded-full scale-150" />
-               <Unlock className="w-32 h-32 text-emerald-400 scale-125 transition-transform duration-500 relative z-10" />
+               {/* Background Glow turning from Red to Green */}
+               <div className="absolute inset-0 blur-[100px] rounded-full scale-[2.5]" style={{ animation: 'redToGreen 2s forwards', backgroundColor: 'currentColor', opacity: 0.5 }} />
+
+               <div className="relative z-10 animate-bounce">
+                 <style>{`
+                   @keyframes redToGreen {
+                     0% { color: #F43F5E; filter: drop-shadow(0 0 50px rgba(244,63,94,1)); }
+                     50% { color: #F43F5E; filter: drop-shadow(0 0 50px rgba(244,63,94,1)); }
+                     60% { color: #10B981; filter: drop-shadow(0 0 50px rgba(16,185,129,1)); }
+                     100% { color: #10B981; filter: drop-shadow(0 0 50px rgba(16,185,129,1)); }
+                   }
+                   @keyframes flash {
+                     0%, 100% { opacity: 0; }
+                     50% { opacity: 1; }
+                   }
+                 `}</style>
+                 <Unlock className="w-40 h-40" style={{ animation: 'redToGreen 2s forwards' }} />
+               </div>
             </div>
-            <h2 className="text-3xl font-bold text-white mt-12 mb-2">Accès Débloqué</h2>
-            <p className="text-emerald-400/80">Redirection vers la galerie VIP...</p>
+            <h2 className="text-4xl font-bold text-white mt-20 mb-4 text-center tracking-tight">Accès confirmé</h2>
+            <p className="text-emerald-400 text-xl font-medium text-center animate-pulse">Redirection en cours...</p>
           </div>
         </div>
       )}
@@ -145,12 +160,15 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
 
       {/* FOMO Toast */}
       <div className={`fixed bottom-6 left-6 z-50 transition-all duration-500 transform ${fomoToast ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
-        <div className="bg-black/80 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full shadow-2xl flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse-fast shrink-0 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-white">{fomoToast?.message}</span>
-            <span className="text-xs text-muted-foreground">il y a {fomoToast?.timeAgo}s</span>
+        <div className="bg-black/80 border border-white/10 backdrop-blur-md px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-3">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse-fast shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Vient de débloquer</span>
           </div>
+          <div className="w-[1px] h-4 bg-white/10" />
+          <span className="text-sm font-medium text-white/90">
+            {fomoToast?.message} <span className="text-white/40">(il y a {fomoToast?.timeAgo}s)</span>
+          </span>
         </div>
       </div>
 
@@ -180,15 +198,11 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
 
              {/* Dynamic Video Player Elements */}
-             <div className="absolute top-6 left-6 z-20 flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-rose-600 text-white px-3 py-1 rounded text-xs font-bold tracking-widest shadow-[0_0_15px_rgba(225,29,72,0.5)]">
-                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                  EN DIRECT
-                </div>
-                <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-sm px-3 py-1 rounded text-xs text-white/90">
-                  <Eye className="w-3.5 h-3.5" />
-                  1 480 visionnages en cours
-                </div>
+             <div className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-black/80 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium text-white shadow-xl">
+               <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+               <span className="font-bold tracking-wider">EN DIRECT</span>
+               <span className="opacity-50">•</span>
+               <span>1 842 spectateurs</span>
              </div>
 
              <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
@@ -196,11 +210,13 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
              </div>
 
              <div className="relative z-10 flex flex-col items-center gap-4 text-white/50">
-               <div className="relative flex items-center justify-center">
-                 {/* Fake sound waves */}
-                 <div className="absolute w-24 h-24 border-2 border-white/20 rounded-full animate-ping" />
-                 <div className="absolute w-32 h-32 border border-white/10 rounded-full animate-ping delay-150" />
-                 <VolumeX className="w-16 h-16 animate-pulse-fast relative z-10" />
+               <div className="flex items-center gap-6">
+                 <Play className="w-16 h-16 text-white/80 drop-shadow-xl" fill="currentColor" />
+                 <div className="relative flex items-center justify-center">
+                   <div className="absolute w-24 h-24 border-2 border-white/20 rounded-full animate-ping" />
+                   <div className="absolute w-32 h-32 border border-white/10 rounded-full animate-ping delay-150" />
+                   <VolumeX className="w-16 h-16 animate-pulse-fast relative z-10" />
+                 </div>
                </div>
                <span className="text-sm font-bold tracking-widest">SON COUPÉ</span>
              </div>
@@ -256,10 +272,10 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
         <div className="absolute inset-0 z-40 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
 
           {/* Border Beam Wrapper */}
-          <div className="w-full max-w-4xl relative overflow-hidden p-[1px] rounded-3xl animate-in zoom-in-95 fade-in duration-700 shadow-2xl">
+          <div className="w-full max-w-4xl relative overflow-hidden p-[2px] rounded-3xl animate-in zoom-in-95 fade-in duration-700 shadow-[0_0_50px_rgba(244,63,94,0.15)]">
             {/* The Beam */}
-            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(244,63,94,1)_360deg)] animate-border-spin mix-blend-screen" />
-            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_180deg,transparent_0_340deg,rgba(99,102,241,1)_360deg)] animate-border-spin mix-blend-screen" />
+            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(244,63,94,1)_360deg)] animate-border-spin" />
+            <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_180deg,transparent_0_340deg,rgba(168,85,247,1)_360deg)] animate-border-spin" />
 
             {/* Inner Content */}
             <div className="w-full bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-[calc(1.5rem-1px)] overflow-hidden relative z-10">
@@ -341,11 +357,11 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
 
                     <div className="pt-2">
                       <Button
-                        className="relative overflow-hidden w-full py-7 text-lg font-bold bg-gradient-to-r from-indigo-600 via-purple-500 to-rose-500 text-white rounded-xl shadow-[0_0_30px_rgba(244,63,94,0.35)] hover:shadow-[0_0_45px_rgba(244,63,94,0.6)] hover:scale-[1.02] active:scale-95 transition-all border-none group"
+                        className="relative overflow-hidden w-full py-7 text-lg font-bold bg-gradient-to-r from-indigo-600 via-purple-500 to-rose-500 text-white rounded-xl shadow-[0_0_35px_rgba(244,63,94,0.45)] hover:shadow-[0_0_50px_rgba(244,63,94,0.7)] hover:scale-[1.02] active:scale-95 transition-all border-none group"
                         onClick={() => setIsPaymentModalOpen(true)}
                       >
                         {/* Shimmer Effect */}
-                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-15deg] group-hover:animate-shimmer animate-[shimmer_3s_infinite]" />
+                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-15deg] animate-[shimmer_3s_infinite]" />
                         <span className="relative z-10">Commencer pour {selectedPlan.price} € →</span>
                       </Button>
                       <p className="text-center text-[10px] text-muted-foreground mt-4 leading-relaxed">
