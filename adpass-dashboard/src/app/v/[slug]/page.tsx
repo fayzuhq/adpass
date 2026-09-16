@@ -40,16 +40,25 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
 
   useEffect(() => {
     if (!isAgeVerified) return;
-    const interval = setInterval(() => {
+
+    let interval: NodeJS.Timeout;
+
+    const showToast = () => {
       const randomMsg = fomoMessages[Math.floor(Math.random() * fomoMessages.length)];
       const randomSeconds = Math.floor(Math.random() * 20) + 2;
       setFomoToast({ message: randomMsg, timeAgo: randomSeconds });
-
-      // Hide after 4 seconds
       setTimeout(() => setFomoToast(null), 4000);
-    }, 9000); // Between 8s and 10s
+    };
 
-    return () => clearInterval(interval);
+    const initialTimeout = setTimeout(() => {
+      showToast();
+      interval = setInterval(showToast, 9000);
+    }, 2500);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      if (interval) clearInterval(interval);
+    };
   }, [isAgeVerified]);
 
 
@@ -223,10 +232,21 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-             {[1, 2, 3, 4].map(i => (
-               <div key={i} className="aspect-square bg-zinc-900 rounded-xl relative border border-white/5 overflow-hidden flex items-center justify-center">
+             {["18:42", "22:15", "14:08", "31:50"].map((duration, i) => (
+               <div key={i} className="aspect-square bg-gradient-to-tr from-zinc-950 via-rose-950/20 to-zinc-900 rounded-xl relative border border-white/5 overflow-hidden flex items-center justify-center">
                  <div className="absolute inset-0 bg-black/20" />
+
+                 {/* 4K Badge */}
+                 <div className="absolute top-2 left-2 z-20 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[9px] font-bold text-white/90 border border-white/10">
+                   4K
+                 </div>
+
                  <Lock className="w-6 h-6 text-rose-500/60 relative z-10" />
+
+                 {/* Fake Duration */}
+                 <div className="absolute bottom-2 right-2 z-20 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-medium text-white/90 border border-white/10 tabular-nums">
+                   {duration}
+                 </div>
                </div>
              ))}
           </div>
@@ -269,7 +289,7 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
 
       {/* Paywall Overlay */}
       {isAgeVerified && !isUnlocked && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-40 overflow-y-auto p-4 sm:p-6 flex justify-center items-start md:items-center">
 
           {/* Border Beam Wrapper */}
           <div className="w-full max-w-4xl relative overflow-hidden p-[2px] rounded-3xl animate-in zoom-in-95 fade-in duration-700 shadow-[0_0_50px_rgba(244,63,94,0.15)]">
@@ -278,7 +298,7 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
             <div className="absolute inset-0 w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_180deg,transparent_0_340deg,rgba(168,85,247,1)_360deg)] animate-border-spin" />
 
             {/* Inner Content */}
-            <div className="w-full bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-[calc(1.5rem-1px)] overflow-hidden relative z-10">
+            <div className="w-full bg-[#0A0B10] backdrop-blur-xl border border-white/10 rounded-[calc(1.5rem-1px)] overflow-hidden relative z-10">
 
               <div className="p-6 sm:p-10">
                 <div className="text-center mb-8">
@@ -390,7 +410,7 @@ export default function LockerPage({ params }: { params: Promise<{ slug: string 
             <div className="text-xl font-mono font-bold">{selectedPlan.price} €</div>
           </div>
 
-          <Button type="button" className="w-full bg-white text-black hover:bg-zinc-200 font-bold py-6 rounded-xl flex items-center justify-center gap-2">
+          <Button type="button" onClick={handleProcessPayment} disabled={isProcessing} className="w-full bg-white text-black hover:bg-zinc-200 font-bold py-6 rounded-xl flex items-center justify-center gap-2">
             Payer avec <strong>Apple Pay</strong>
           </Button>
 
